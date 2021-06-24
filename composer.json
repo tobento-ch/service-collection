@@ -1,0 +1,46 @@
+{
+    "name": "tobento/service-collection",
+    "type": "library",
+    "description": "Fluent and convenient wrapper classes for working with arrays of data.",
+    "keywords": [
+        "tobento",
+        "package",
+        "php",
+        "array",
+        "translations"
+    ],
+    "homepage": "https://www.tobento.ch",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tobias Strub",
+            "email": "info@tobento.ch",
+            "homepage": "https://www.tobento.ch"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.0",
+        "tobento/service-support": "^1.0",
+        "tobento/service-macro": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "vimeo/psalm": "^4.0"
+    },    
+    "autoload": {
+        "psr-4": {
+            "Tobento\\Service\\Collection\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tobento\\Service\\Collection\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --testdox --colors=always",
+        "psalm": "vendor/bin/psalm"
+    }
+}
