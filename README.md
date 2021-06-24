@@ -839,7 +839,23 @@ $trans->setLocale('de');
 // change default locale
 ```
 
+#### set()
+
+#### setAll()
+
 #### add()
+
+#### get()
+
+#### has()
+
+#### delete()
+
+#### deleteAll()
+
+#### toArray()
+
+#### toJson()
 
 # Credits
 
