@@ -170,6 +170,21 @@ class TranslationsGetTest extends TestCase
         );
     }
     
+    public function testGetWithSpecificLocalesUsesLocaleMapping()
+    {        
+        $t = new Translations($this->translations, 'en');
+        
+        $t->setLocaleMapping(['de-CH' => 'de']);
+        
+        $this->assertSame(
+            [
+                'de-CH' => 'title de',
+                'fr' => 'title fr',
+            ],
+            $t->get('title', null, ['de-CH', 'fr'])
+        );
+    }    
+    
     public function testGetWithSpecificLocalesIfLocaleDoesNotExistFallsbackToDefaultLocale()
     {        
         $t = new Translations($this->translations, 'en');
