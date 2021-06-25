@@ -39,6 +39,30 @@ class TranslationsAddTest extends TestCase
         $this->assertSame(['en' => ['title' => 'title en']], $t->all([]));
     }
     
+    public function testAddWithDotNotation()
+    {        
+        $t = new Translations([], 'en');
+        
+        $t->add('meta.color', 'blue');
+        
+        $this->assertSame(
+            ['en' => ['meta' => ['color' => 'blue']]],
+            $t->all([])
+        );
+    }
+
+    public function testAddWithDotNotationNoOverwrite()
+    {        
+        $t = new Translations(['en' => ['meta' => ['color' => 'blue']]], 'en');
+        
+        $t->add('meta.color', 'yellow');
+        
+        $this->assertSame(
+            ['en' => ['meta' => ['color' => 'blue']]],
+            $t->all([])
+        );
+    }     
+    
     public function testAddWithLocale()
     {        
         $t = new Translations([], 'en');

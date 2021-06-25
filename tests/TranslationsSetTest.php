@@ -30,6 +30,15 @@ class TranslationsSetTest extends TestCase
         $this->assertSame(['en' => ['title' => 'title en']], $t->all([]));
     }
     
+    public function testSetWitDotNotation()
+    {        
+        $t = new Translations([], 'en');
+        
+        $t->set('meta.color', 'blue');
+        
+        $this->assertSame(['en' => ['meta' => ['color' => 'blue']]], $t->all([]));
+    }    
+    
     public function testSetWithLocale()
     {        
         $t = new Translations([], 'en');

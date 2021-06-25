@@ -46,6 +46,23 @@ class TranslationsHasTest extends TestCase
         
         $this->assertTrue($t->has('title'));
     }
+    
+    public function testHasWithDotNotation()
+    {        
+        $t = new Translations([
+            'de' => [
+                'title' => 'title de',
+            ],
+            'en' => [
+                'desc' => 'desc en',
+                'meta' => [
+                    'color' => 'blue',
+                ],
+            ],
+        ], 'en');
+        
+        $this->assertTrue($t->has('meta.color'));
+    }    
 
     public function testHasWithSpecificLocale()
     {        

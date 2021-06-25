@@ -51,6 +51,26 @@ class TranslationsGetTest extends TestCase
         );
     }
     
+    public function testGetWithDefaultLocaleDotNotation()
+    {        
+        $t = new Translations([
+            'de' => [
+                'title' => 'title de',
+            ],
+            'en' => [
+                'desc' => 'desc en',
+                'meta' => [
+                    'color' => 'blue',
+                ],
+            ],
+        ], 'en');
+        
+        $this->assertSame(
+            'blue',
+            $t->get('meta.color')
+        );
+    }    
+    
     public function testGetWithDefaultLocaleReturnsDefaultValueIfNotExist()
     {        
         $t = new Translations($this->translations, 'en');

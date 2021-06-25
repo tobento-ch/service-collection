@@ -60,6 +60,34 @@ class TranslationsDeleteTest extends TestCase
             $t->delete('title')->all([])
         );
     }
+    
+    public function testDeleteWithDotNotation()
+    {        
+        $t = new Translations([
+            'de' => [
+                'title' => 'title de',
+            ],
+            'en' => [
+                'desc' => 'desc en',
+                'meta' => [
+                    'color' => 'blue',
+                ],
+            ],
+        ], 'en');
+        
+        $this->assertSame(
+            [
+                'de' => [
+                    'title' => 'title de',
+                ],
+                'en' => [
+                    'desc' => 'desc en',
+                    'meta' => [],
+                ],
+            ],
+            $t->delete('meta.color')->all([])
+        );
+    }    
 
     public function testDeleteWithSpecificLocale()
     {        
