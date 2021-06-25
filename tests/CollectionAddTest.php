@@ -37,6 +37,22 @@ class CollectionAddTest extends TestCase
         );
     }
     
+    public function testAddShouldAddIfNull()
+    {
+        $this->assertSame(
+            ['foo' => 'new'],
+            (new Collection(['foo' => null]))->add('foo', 'new')->all()
+        );
+    }
+    
+    public function testAddShouldNotAddIfEmpty()
+    {
+        $this->assertSame(
+            ['foo' => ''],
+            (new Collection(['foo' => '']))->add('foo', 'new')->all()
+        );
+    }    
+    
     public function testAddWithDotNotationShouldNotAddIfExist()
     {
         $this->assertSame(
