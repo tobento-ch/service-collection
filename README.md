@@ -830,7 +830,7 @@ $trans = new Translations([
 ], 'en');
 
 $trans->setLocaleFallbacks(['it' => 'en', 'de' => 'en']);
-// only get() method takes fallabacks into account.
+// only get() method takes fallbacks into account.
 
 $trans->setLocaleMapping(['de-CH' => 'de', 1 => 'de']);
 // ['de-CH' (requested) => 'de' (stored)]
@@ -839,23 +839,425 @@ $trans->setLocale('de');
 // change default locale
 ```
 
+#### setAll()
+
+Set all translations. This would overwrite all previous translations.
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations();
+
+$trans->setAll([
+    'de' => [
+        'title' => 'title de',
+        'desc' => 'desc de',
+    ],
+]);
+```
+
 #### set()
 
-#### setAll()
+Set translation(s) value by key.
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations(locale: 'en');
+
+$trans->setLocaleMapping(['de-CH' => 'de']);
+
+// set a title for the default locale.
+$trans->set('title', 'Title');
+
+// set a title for specific locale.
+$trans->set('title', 'Title De', 'de');
+
+// set a value for all current locales.
+$trans->set('foo', 'Bar', []);
+
+// set a value for specific locales.
+$trans->set('description', 'Description', ['de-CH', 'fr']);
+
+// using dot notation
+$trans->set('meta.color', 'red', []);
+
+/*
+Array
+(
+    [en] => Array
+        (
+            [title] => Title
+            [foo] => Bar
+            [meta] => Array
+                (
+                    [color] => red
+                )
+
+        )
+
+    [de] => Array
+        (
+            [title] => Title De
+            [foo] => Bar
+            [description] => Description
+            [meta] => Array
+                (
+                    [color] => red
+                )
+
+        )
+
+    [fr] => Array
+        (
+            [description] => Description
+            [meta] => Array
+                (
+                    [color] => red
+                )
+
+        )
+
+)
+*/
+```
 
 #### add()
 
+Add translation(s) value by key if it does not exist or is null.
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations(locale: 'en');
+
+$trans->setLocaleMapping(['de-CH' => 'de']);
+
+// add title for default locale if not exist or is null.
+$trans->add('title', 'Title');
+
+// add title for specific locale if not exist or is null.
+$trans->add('title', 'Title De', 'de');
+
+// add a value for all current locales if not exist or is null.
+$trans->add('foo', 'Bar', []);
+
+// add a value for specific locales if not exist or is null.
+$trans->add('description', 'Description', ['de-CH', 'fr']);
+
+// using dot notation
+$trans->add('meta.color', 'red', []);
+```
+
 #### get()
+
+Get value for default locale:
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations([
+    'de' => [
+        'title' => 'Title de',
+    ],
+    'en' => [
+        'title' => 'Title en',
+        'meta' => [
+            'color' => 'blue',
+        ],
+    ],
+], 'en');
+
+// get title for default locale.
+var_dump($trans->get('title'));
+// string(8) "Title en"
+
+// with a fallback value.
+var_dump($trans->get('foo', 'default'));
+// string(7) "default"
+
+// using dot notation.
+var_dump($trans->get('meta.color'));
+// string(4) "blue" 
+```
+
+Get value for specific locale:
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations([
+    'de' => [
+        'title' => 'Title de',
+    ],
+    'en' => [
+        'title' => 'Title en',
+    ],
+], 'en');
+
+$trans->setLocaleMapping(['de-CH' => 'de']);
+$trans->setLocaleFallbacks(['fr' => 'en']);
+
+// get title for specific locale.
+var_dump($trans->get('title', null, 'de-CH'));
+// string(8) "Title de"
+
+var_dump($trans->get('desc', null, 'de'));
+// NULL
+
+var_dump($trans->get('desc', 'Desc De', 'de'));
+// string(7) "Desc De"
+
+// As locale fallback is defined for fr and value fallback is null.
+var_dump($trans->get('title', null, 'fr'));
+// string(8) "Title en"
+
+// Does not fallback to en as fallback value is defined.
+var_dump($trans->get('title', 'Title Fr', 'fr'));
+// string(8) "Title Fr"
+```
+
+Get values for current locales:
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations([
+    'de' => [
+        'title' => 'Title de',
+    ],
+    'en' => [
+        'title' => 'Title en',
+    ],
+], 'en');
+
+$titles = $trans->get('title', null, []);
+/*Array
+(
+    [de] => Title de
+    [en] => Title en
+)*/
+```
+
+Get values for specific locales:
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations([
+    'de' => [
+        'title' => 'Title de',
+    ],
+    'en' => [
+        'title' => 'Title en',
+    ],
+], 'en');
+
+$trans->setLocaleMapping(['de-CH' => 'de']);
+
+// fr locale fallsback to the default locale en
+// if no specific locale fallback is defined and
+// fallback value is null.
+$titles = $trans->get('title', null, ['de-CH', 'fr']);
+/*Array
+(
+    [de-CH] => Title de
+    [fr] => Title en
+)*/
+
+$trans->setLocaleFallbacks(['fr' => 'de']);
+
+// with fallback value ignoring any locale fallbacks
+$titles = $trans->get('title', 'Fallback value', ['de', 'fr']);
+/*Array
+(
+    [de] => Title de
+    [fr] => Fallback value
+)*/
+
+// without fallback value uses the above locale fallbacks.
+$titles = $trans->get('title', null, ['de', 'fr']);
+/*Array
+(
+    [de] => Title de
+    [fr] => Title de
+)*/
+```
 
 #### has()
 
+If translation(s) by key exist.
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations([
+    'de' => [
+        'title' => 'Title de',
+    ],
+    'en' => [
+        'title' => 'Title en',
+        'meta' => [
+            'color' => 'blue',
+        ],
+    ],
+], 'en');
+
+$trans->setLocaleMapping(['de-CH' => 'de']);
+
+// uses default locale.
+var_dump($trans->has('title'));
+// bool(true)
+
+// with specific locale.
+var_dump($trans->has('title', 'de'));
+// bool(true)
+
+// uses all current locales.
+var_dump($trans->has('title', []));
+// bool(true)
+
+// with specific locales
+var_dump($trans->has('title', ['de-CH', 'en']));
+// bool(true)
+
+// using dot notation.
+var_dump($trans->has('meta.color', ['en']));
+// bool(true)
+```
+
+#### all()
+
+Get all translation(s).
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations([
+    'de' => [
+        'title' => 'Title de',
+    ],
+    'en' => [
+        'title' => 'Title en',
+    ],
+], 'en');
+
+$trans->setLocaleMapping(['de-CH' => 'de']);
+
+// get all, default locale.
+$all = $trans->all();
+
+// get all, specific locale.
+$all = $trans->all('de-CH');
+
+// get all, all current locales.
+$all = $trans->all([]);
+
+// get all, specific locales.
+$all = $trans->all(['de-C', 'fr']);
+```
+
 #### delete()
+
+Delete translation(s) by key.
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations([
+    'de' => [
+        'title' => 'Title de',
+    ],
+    'en' => [
+        'title' => 'Title en',
+        'meta' => [
+            'color' => 'blue',
+        ],
+    ],
+], 'en');
+
+$trans->setLocaleMapping(['de-CH' => 'de']);
+
+// delete default locale title.
+$trans->delete('title');
+
+// delete specific locale title.
+$trans->delete('title', 'de-CH');
+
+// delete all current locales titles.
+$trans->delete('title', []);
+
+// delete specific locales titles.
+$trans->delete('title', ['de-CH', 'fr']);
+
+// using dot notation
+$trans->delete('meta.color', []);
+```
 
 #### deleteAll()
 
+Delete all translation(s).
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations([
+    'de' => [
+        'title' => 'Title de',
+    ],
+    'en' => [
+        'title' => 'Title en',
+    ],
+], 'en');
+
+$trans->setLocaleMapping(['de-CH' => 'de']);
+
+// delete all, default locale.
+$trans->deleteAll();
+
+// delete all, specific locale.
+$trans->deleteAll('de-CH');
+
+// delete all, all current locales.
+$trans->deleteAll([]);
+
+// delete all, specific locales.
+$trans->deleteAll(['de-CH', 'fr']);
+```
+
 #### toArray()
 
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations([
+    'de' => [
+        'title' => 'Title de',
+    ],
+    'en' => [
+        'title' => 'Title en',
+    ],
+], 'en');
+
+$array = $trans->toArray();
+```
+
 #### toJson()
+
+```php
+use Tobento\Service\Collection\Translations;
+
+$trans = new Translations([
+    'de' => [
+        'title' => 'Title de',
+    ],
+    'en' => [
+        'title' => 'Title en',
+    ],
+], 'en');
+
+$jsonString = $trans->toJson();
+```
 
 # Credits
 
