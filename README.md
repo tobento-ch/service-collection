@@ -1154,7 +1154,7 @@ $all = $trans->all('de-CH');
 $all = $trans->all([]);
 
 // get all, specific locales.
-$all = $trans->all(['de-C', 'fr']);
+$all = $trans->all(['de-CH', 'fr']);
 ```
 
 #### delete()
