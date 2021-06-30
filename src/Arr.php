@@ -335,7 +335,7 @@ class Arr
             $cur = &$cur[$curKey]; 
         }
 
-        if (!isset($cur[$lastKey])) {
+        if (!array_key_exists($lastKey, $cur)) {
             return $array;
         }
         

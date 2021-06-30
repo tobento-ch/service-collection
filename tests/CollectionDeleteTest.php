@@ -35,5 +35,21 @@ class CollectionDeleteTest extends TestCase
             ['title' => 'Car', 'meta' => []],
             $all
         );
-    }   
+    }
+    
+    public function testDeleteIfNull()
+    {
+        $all = (new Collection([
+            'key' => 'car',
+            'title' => 'Car',
+            'meta' => [
+                'color' => null
+            ]    
+        ]))->delete('meta.color')->delete('key')->all();
+        
+        $this->assertSame(
+            ['title' => 'Car', 'meta' => []],
+            $all
+        );
+    }    
 }
