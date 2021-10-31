@@ -279,7 +279,7 @@ class Collection implements Arrayable, IteratorAggregate, Countable, Jsonable, J
     }
 
     /**
-     * Filter the messages
+     * Filter the items.
      *
      * @param callable $callback
      * @return static
