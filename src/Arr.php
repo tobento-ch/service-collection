@@ -373,13 +373,12 @@ class Arr
         {
             if (is_array($array) && array_key_exists($k, $array)) {
                 $array = $array[$k];
-                continue;
             } else {
                 return false;
             }
         }
         
-        return ($array === null) ? false : true;
+        return true;
     }
     
     /**

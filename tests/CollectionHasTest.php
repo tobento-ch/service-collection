@@ -76,5 +76,22 @@ class CollectionHasTest extends TestCase
         ]))->has('title', 'meta.1');
         
         $this->assertTrue($has);
-    }    
+    }
+    
+    public function testHasWithNullValue()
+    {
+        $has = (new Collection([
+            'key' => null,
+            'meta' => [
+                'color' => null
+            ],
+            'options' => [
+                'colors' => [
+                    'red' => null,
+                ]
+            ]            
+        ]))->has('key', 'meta.color', 'options.colors.red');
+        
+        $this->assertTrue($has);
+    }
 }
