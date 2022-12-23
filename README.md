@@ -55,6 +55,7 @@ composer require tobento/service-collection
 | [merge()](#merge) | Merge items. | no |
 | [mergeRecursive()](#merge) | Merge items recursive. | no |
 | [only()](#only) | Get only the items from the keys specified. | yes |
+| [onlyPresent()](#onlyPresent) | Get only the items present from the keys specified. | yes |
 | [replace()](#replace) | Replace the items. | - |
 | [replaceRecursive()](#replace-recursive) | Replace the items recursive. | - |
 | [set()](#set) | Set an item value by key. | yes |
@@ -611,6 +612,35 @@ Array
 (
     [title] => Car
     [foo] => default value 
+)
+*/
+```
+
+#### onlyPresent()
+
+Get only the items present from the keys specified.
+
+```php
+use Tobento\Service\Collection\Collection;
+
+$all = (new Collection([
+    'key' => 'car',
+    'title' => 'Car',
+    'meta' => [
+        'color' => 'red',
+        'weight' => 1500,
+    ]    
+]))->onlyPresent(['title', 'meta.color', 'foo'])->all();
+
+/*
+Array
+(
+    [title] => Car
+    [meta] => Array
+        (
+            [color] => red
+        )
+
 )
 */
 ```
