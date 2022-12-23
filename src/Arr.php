@@ -202,6 +202,31 @@ class Arr
         
         return $items;
     }
+    
+    /**
+     * Get only the items present from the keys specified.
+     *
+     * @param array|ArrayAccess $array
+     * @param array $keys The keys.
+     * @return array|ArrayAccess
+     */
+    public static function onlyPresent($array, array $keys)
+    {
+        if (! static::arrayable($array)) {
+            return [];
+        }
+        
+        $items = [];
+        
+        foreach($keys as $key)
+        {
+            if (static::has($array, $key)) {
+                $items = static::set($items, $key, static::get($array, $key));
+            }
+        }
+        
+        return $items;
+    }    
 
     /**
      * Get all items except the keys specified.
@@ -334,6 +359,11 @@ class Arr
         foreach($keys as $curKey){
             $cur = &$cur[$curKey]; 
         }
+        
+        if (!is_array($cur)) {
+            unset($cur);
+            return $array;
+        }
 
         if (!array_key_exists($lastKey, $cur)) {
             return $array;
@@ -403,7 +433,7 @@ class Arr
      * @param string|int $key
      * @param mixed $value Any value
      * @param string $notation The notation to be used.
-     * @param array|ArrayAccess
+     * @return array|ArrayAccess
      */         
     public static function setByNotation(&$array, string|int $key, mixed $value, string $notation = '.')
     {
