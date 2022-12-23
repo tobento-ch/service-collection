@@ -51,5 +51,19 @@ class CollectionDeleteTest extends TestCase
             ['title' => 'Car', 'meta' => []],
             $all
         );
+    }
+    
+    public function testDeleteNestedIfNotExist()
+    {
+        $all = (new Collection([
+            'meta' => [
+                'colors' => null,
+            ]    
+        ]))->delete('meta.colors.red')->all();
+        
+        $this->assertSame(
+            ['meta' => ['colors' => null]],
+            $all
+        );
     }    
 }
