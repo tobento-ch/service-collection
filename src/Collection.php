@@ -17,6 +17,7 @@ use Tobento\Service\Macro\Macroable;
 use Tobento\Service\Support\Arrayable;
 use Tobento\Service\Support\Jsonable;
 use Tobento\Service\Support\Str;
+use BadMethodCallException;
 use JsonSerializable;
 use IteratorAggregate;
 use ArrayIterator;
@@ -300,7 +301,18 @@ class Collection implements Arrayable, IteratorAggregate, Countable, Jsonable, J
     public function only(array $keys, mixed $default = null): static
     {
         return new static(Arr::only($this->items, $keys, $default));
-    }    
+    }
+    
+    /**
+     * Get only the items present from the keys specified.
+     *
+     * @param array $keys The keys.
+     * @return static
+     */
+    public function onlyPresent(array $keys): static
+    {
+        return new static(Arr::onlyPresent($this->items, $keys));
+    }
 
     /**
      * Get all items except the keys specified.
@@ -452,6 +464,8 @@ class Collection implements Arrayable, IteratorAggregate, Countable, Jsonable, J
         {
             return $this->get($attribute, ...$parameters);
         }
+        
+        throw new BadMethodCallException("Method {$method} does not exist.");
     }
     
     /**
