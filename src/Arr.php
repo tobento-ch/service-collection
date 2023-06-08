@@ -315,9 +315,9 @@ class Arr
      * @param iterable $array
      * @param null|callable $callback A callback e.g. fn($value, $key): mixed (value)
      * @param string $notation
-     * @return array
+     * @return array|ArrayAccess
      */
-    public static function undot($array, null|callable $callback = null, string $notation = '.'): array
+    public static function undot($array, null|callable $callback = null, string $notation = '.')
     {
         $result = [];
 
@@ -370,9 +370,9 @@ class Arr
      *
      * @param iterable $array
      * @param null|callable $callback A callback e.g. fn($value, $key): mixed (value)
-     * @return array
+     * @return array|ArrayAccess
      */
-    public static function unflat($array, null|callable $callback = null): array
+    public static function unflat($array, null|callable $callback = null)
     {
         $dotted = [];
 
