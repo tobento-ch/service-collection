@@ -310,6 +310,85 @@ class Arr
     }
     
     /**
+     * Undot array with notation.
+     *
+     * @param iterable $array
+     * @param null|callable $callback A callback e.g. fn($value, $key): mixed (value)
+     * @param string $notation
+     * @return array
+     */
+    public static function undot($array, null|callable $callback = null, string $notation = '.'): array
+    {
+        $result = [];
+
+        foreach ($array as $key => $value) {
+
+            if (!is_null($callback)) {
+                $value = $callback($value, $key);
+            }
+            
+            static::setByNotation($result, $key, $value, $notation);
+        }
+
+        return $result;
+    }
+    
+    /**
+     * Flatten array with array like notation.
+     *
+     * @param iterable $array
+     * @param null|callable $callback A callback e.g. fn($value, $key): mixed (value)
+     * @return array
+     */
+    public static function flat($array, null|callable $callback = null): array
+    {
+        $dotted = static::dot($array);
+        $result = [];
+        
+        foreach($dotted as $key => $value) {
+            
+            $keyArr = explode('.', $key);
+            $key = $keyArr[0]; 
+            unset($keyArr[0]);
+
+            foreach ($keyArr as $k) {
+                $key .= '['.$k.']';
+            }
+            
+            if (!is_null($callback)) {
+                $value = $callback($value, $key);
+            }
+
+            $result[$key] = $value;
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Unflatten array with array like notation.
+     *
+     * @param iterable $array
+     * @param null|callable $callback A callback e.g. fn($value, $key): mixed (value)
+     * @return array
+     */
+    public static function unflat($array, null|callable $callback = null): array
+    {
+        $dotted = [];
+
+        foreach ($array as $key => $value) {
+            
+            if (is_string($key)) {
+                $key = str_replace(['[]', '[', ']'], ['', '.', ''], $key);
+            }
+            
+            $dotted[$key] = $value;
+        }
+
+        return static::undot($dotted, $callback);
+    }
+    
+    /**
      * If the given key exists in the array.
      *
      * @param array|ArrayAccess $array
