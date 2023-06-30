@@ -389,6 +389,54 @@ class Arr
     }
     
     /**
+     * Groups array by the specified parameters.
+     *
+     * @param iterable $array
+     * @param string|callable $groupBy
+     * @param null|callable $groupAs
+     * @param bool $preserveKeys
+     * @return array|ArrayAccess
+     */
+    public static function groupBy(
+        iterable $array,
+        string|callable $groupBy,
+        null|callable $groupAs = null,
+        bool $preserveKeys = true
+    ) {
+        $groups = [];
+
+        foreach($array as $key => $value) {
+            
+            $groupKey = null;
+            
+            if (!is_string($groupBy)) {
+                $groupKey = $groupBy($value, $key);
+            } else {
+                if (
+                    (is_array($value) || $value instanceof ArrayAccess)
+                    && array_key_exists($groupBy, $value)
+                ) {
+                    $groupKey = $value[$groupBy];
+                }
+            }
+            
+            if ($preserveKeys) {
+                $groups[$groupKey][$key] = $value;
+            } else {
+                $groups[$groupKey][] = $value;
+            }
+        }
+        
+        if (!is_null($groupAs)) {
+            foreach($groups as $i => $group) {
+                $groups[$i] = $groupAs($group);
+            }
+        }
+        
+        return $groups;
+    }
+    
+    /**
      * If the given key exists in the array.
      *
      * @param array|ArrayAccess $array
