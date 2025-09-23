@@ -16,10 +16,7 @@ namespace Tobento\Service\Collection\Test;
 use PHPUnit\Framework\TestCase;
 use Tobento\Service\Collection\Collection;
 
-/**
- * CollectionMapTest tests
- */
-class CollectionMapTest extends TestCase
+class CollectionMergeTest extends TestCase
 {    
     public function testMerge()
     {
