@@ -260,6 +260,7 @@ class Arr
      */
     public static function flatten($array, int|float $depth = INF): array
     {
+        $depth = (int)$depth;
         $result = [];
 
         foreach ($array as $item)

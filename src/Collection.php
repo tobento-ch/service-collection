@@ -25,7 +25,7 @@ use Traversable;
 use Countable;
 
 /**
- * Collection
+ * @implements IteratorAggregate<array-key, mixed>
  */
 class Collection implements Arrayable, IteratorAggregate, Countable, Jsonable, JsonSerializable
 {
@@ -387,7 +387,9 @@ class Collection implements Arrayable, IteratorAggregate, Countable, Jsonable, J
      */    
     public function toJson(int $options = 0): string
     {
-        return json_encode($this->jsonSerialize(), $options);
+        $encoded = json_encode($this->jsonSerialize(), $options);
+        
+        return is_string($encoded) ? $encoded : '';
     }
 
     /**
@@ -431,9 +433,9 @@ class Collection implements Arrayable, IteratorAggregate, Countable, Jsonable, J
     /**
      * Returns an iterator for the items.
      *
-     * @return ArrayIterator
+     * @return Traversable<array-key, mixed>
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->items);
     }

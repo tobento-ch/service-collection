@@ -22,7 +22,7 @@ use Traversable;
 use Countable;
 
 /**
- * Translations
+ * @implements IteratorAggregate<array-key, mixed>
  */
 class Translations implements Arrayable, IteratorAggregate, Jsonable, JsonSerializable
 {
@@ -428,9 +428,9 @@ class Translations implements Arrayable, IteratorAggregate, Jsonable, JsonSerial
     /**
      * Returns an iterator for the items.
      *
-     * @return ArrayIterator
+     * @return Traversable<array-key, mixed>
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->translations->getIterator();
     }
