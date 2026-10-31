@@ -597,6 +597,7 @@ class Arr
         
         $data[$lastKey] = $value;
         unset($data);
+        /** @psalm-suppress InvalidReturnStatement */
         return $array;
     }
     
