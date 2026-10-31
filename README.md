@@ -9,6 +9,9 @@ The Collection Service provides fluent and convenient wrapper classes for workin
     - [Highlights](#highlights)
 - [Documentation](#documentation)
     - [Collection](#collection)
+    - [Typed Data](#typed-data)
+        - [Strict Typed Data](#strict-typed-data)
+        - [Lenient Typed Data](#lenient-typed-data)
     - [Translations](#translations)
 - [Credits](#credits)
 ___
@@ -51,6 +54,7 @@ composer require tobento/service-collection
 | [has()](#has) | Check if an item by key exists. | yes |
 | [keys()](#keys) | Gets the item keys. First array level only. | no |
 | [last()](#last) | Get last item passing a given truth test. | - |
+| [lenientTyped()](#lenienttyped) | Returns the items as lenient typed data. | yes |
 | [map()](#map) | Map over each of the items. | - |
 | [merge()](#merge) | Merge items. | no |
 | [mergeRecursive()](#merge) | Merge items recursive. | no |
@@ -60,6 +64,7 @@ composer require tobento/service-collection
 | [replaceRecursive()](#replace-recursive) | Replace the items recursive. | - |
 | [set()](#set) | Set an item value by key. | yes |
 | [setAll()](#set-all) | Set all items. | no |
+| [strictTyped()](#stricttyped) | Returns the items as strict typed data. | yes |
 | [toArray()](#to-array) | Converts the collection into a plain PHP array. | - |
 | [toJson()](#to-json) | Converts the collection into a JSON serialized string. | - |
 | [union()](#union) | Same as merge, except existing items got not overwritten. | - |
@@ -360,6 +365,7 @@ Array
 #### get()
 
 Get an item value by key.
+For strict typed values without casting, use [strictTyped()](#stricttyped).
 
 ```php
 use Tobento\Service\Collection\Collection;
@@ -501,6 +507,25 @@ $last = (new Collection([
 
 var_dump($last);
 // int(9)
+```
+
+#### lenientTyped()
+
+Returns the items as [Lenient Typed Data](#lenient-typed-data). Values with the requested type are valid, and strings which exactly represent an int, float or bool.
+
+```php
+use Tobento\Service\Collection\Collection;
+
+$typed = new Collection([
+    'page' => '2',
+    'newsletter' => 'on',
+])->lenientTyped();
+
+var_dump($typed->int('page', 1));
+// int(2)
+
+var_dump($typed->bool('newsletter'));
+// bool(true)
 ```
 
 #### map()
@@ -758,6 +783,26 @@ Array
 */
 ```
 
+#### strictTyped()
+
+Returns the items as [Strict Typed Data](#strict-typed-data). Only values which already have the requested type are valid.
+
+```php
+use Tobento\Service\Collection\Collection;
+
+$typed = new Collection([
+    'order' => ['comment' => 'Hi', 'quantity' => '3'],
+])->strictTyped();
+
+var_dump($typed->string('order.comment'));
+// string(2) "Hi"
+
+var_dump($typed->int('order.quantity', 1));
+// int(1) ('3' is a string, so the default is returned)
+```
+
+The typed data is a snapshot of the current items. Changing the collection afterwards does not change the typed data.
+
 #### toArray()
 
 Converts the collection into a plain PHP array.
@@ -836,6 +881,109 @@ Array
 )
 */
 ```
+
+## Typed Data
+
+Typed data is for reading values of a known type from uncertain data such as request data, cookies, stored JSON or cart data. Each typed getter returns the value if it is valid for the type, otherwise the default. Values are never cast.
+
+There are two implementations of the ```TypedDataInterface::class```:
+
+| Class | Valid values | Use for |
+| --- | --- | --- |
+| [Strict Typed Data](#strict-typed-data) | Only values which already have the requested type. | Data with known types, such as stored JSON, cart data or config. |
+| [Lenient Typed Data](#lenient-typed-data) | Values with the requested type, and strings which exactly represent an int, float or bool. | Data where everything arrives as string, such as request data, cookies or imported CSV data. |
+
+**Methods**
+
+| Method | Description | Dot Notation Supported |
+| --- | --- | --- |
+| ```new(array $data)``` | Returns a new instance with the given data. | - |
+| ```has($key)``` | Check if a key exists. | yes |
+| ```get($key, $default = null)``` | Returns the value without any type check. | yes |
+| ```string($key, $default = '')``` | Returns the value as string or the default. | yes |
+| ```int($key, $default = 0)``` | Returns the value as int or the default. | yes |
+| ```float($key, $default = 0.0)``` | Returns the value as float or the default. | yes |
+| ```bool($key, $default = false)``` | Returns the value as bool or the default. | yes |
+| ```array($key, $default = [])``` | Returns the value as array or the default. | yes |
+| ```list($key, $default = [])``` | Returns the value as list (array with sequential keys starting at 0) or the default. | yes |
+| ```all()``` | Returns all data. | - |
+
+**Sub sections**
+
+Use the ```new()``` method to create typed data from a part of the data:
+
+```php
+$order = $typed->new($typed->array('order'));
+
+var_dump($order->string('comment'));
+```
+
+If the key is missing or not an array, the new typed data is empty and every getter returns its default.
+
+### Strict Typed Data
+
+Only values which already have the requested type are valid.
+
+```php
+use Tobento\Service\Collection\StrictTypedData;
+
+$data = new StrictTypedData([
+    'order' => ['comment' => 'Hi', 'quantity' => '3'],
+    'gift' => true,
+]);
+
+var_dump($data->string('order.comment'));
+// string(2) "Hi"
+
+var_dump($data->string('order.missing', 'none'));
+// string(4) "none"
+
+var_dump($data->int('order.quantity', 1));
+// int(1) ('3' is a string, so the default is returned)
+
+var_dump($data->bool('gift'));
+// bool(true)
+
+var_dump($data->array('order'));
+// array(2) { ["comment"]=> string(2) "Hi" ["quantity"]=> string(1) "3" }
+```
+
+### Lenient Typed Data
+
+Values with the requested type are valid, and strings which exactly represent an int, float or bool. Strings are validated, never cast.
+
+```php
+use Tobento\Service\Collection\LenientTypedData;
+
+$data = new LenientTypedData([
+    'page' => '2',
+    'amount' => '2.5',
+    'newsletter' => 'on',
+    'limit' => 'abc',
+]);
+
+var_dump($data->int('page', 1));
+// int(2)
+
+var_dump($data->float('amount'));
+// float(2.5)
+
+var_dump($data->bool('newsletter'));
+// bool(true)
+
+var_dump($data->int('limit', 20));
+// int(20) ('abc' is not a valid int, so the default is returned)
+```
+
+**Valid values**
+
+| Method | Valid values | Not valid (returns the default) |
+| --- | --- | --- |
+| ```int()``` | int values: ```3```, ```-3```<br>strings: ```'3'```, ```'-3'```, ```'0'``` | float values: ```3.0```<br>strings: ```'03'```, ```'3.0'```, ```'1e3'```, ```' 3'```, ```'abc'```, overflow |
+| ```float()``` | float values: ```2.5```<br>int values: ```3``` (returned as ```3.0```)<br>strings: ```'2.5'```, ```'-2.5'```, ```'3'```, ```'.5'``` | strings: ```'2,5'```, ```'1e3'```, ```' 2.5'```, ```''```, ```'abc'``` |
+| ```bool()``` | bool values: ```true```, ```false```<br>strings true: ```'1'```, ```'true'```, ```'on'```, ```'yes'```<br>strings false: ```'0'```, ```'false'```, ```'off'```, ```'no'```, ```''``` | int values: ```1```, ```0```<br>strings: ```'2'```, ```' 1'```, ```'abc'``` |
+
+Strings with leading or trailing whitespace are never valid. The ```string()```, ```array()``` and ```list()``` methods work the same as in [Strict Typed Data](#strict-typed-data).
 
 ## Translations
 
