@@ -108,6 +108,7 @@ class Collection implements Arrayable, IteratorAggregate, Countable, Jsonable, J
                     
     /**
      * Get an item value by key.
+     * For strict typed values without casting, use strictTyped().
      *
      * @param string|int $key The key.
      * @param mixed $default A default value.
@@ -428,6 +429,28 @@ class Collection implements Arrayable, IteratorAggregate, Countable, Jsonable, J
             
             return $value instanceof Arrayable ? $value->toArray() : $value;
         })->all();    
+    }
+    
+    /**
+     * Returns the items as strict typed data.
+     * Only values which already have the requested type are valid.
+     *
+     * @return TypedDataInterface
+     */
+    public function strictTyped(): TypedDataInterface
+    {
+        return new StrictTypedData($this->all());
+    }
+    
+    /**
+     * Returns the items as lenient typed data.
+     * Values which have the requested type are valid, and strings which exactly represent an int, float or bool.
+     *
+     * @return TypedDataInterface
+     */
+    public function lenientTyped(): TypedDataInterface
+    {
+        return new LenientTypedData($this->all());
     }
 
     /**
