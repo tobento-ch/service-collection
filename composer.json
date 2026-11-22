@@ -1,6 +1,6 @@
 {
     "name": "tobento/service-collection",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "type": "library",
     "description": "Fluent and convenient wrapper classes for working with arrays of data.",
     "keywords": [
