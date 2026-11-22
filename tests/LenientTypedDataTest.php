@@ -184,7 +184,9 @@ class LenientTypedDataTest extends TestCase
             'two' => '2',
             'text' => 'abc',
             'space' => ' 1',
-            'int' => 1,
+            'int_one' => 1,
+            'int_zero' => 0,
+            'int_two' => 2,
             'array' => ['1'],
             'form' => ['newsletter' => 'on'],
         ]);
@@ -207,7 +209,10 @@ class LenientTypedDataTest extends TestCase
         $this->assertSame(true, $data->bool('two', true));
         $this->assertSame(true, $data->bool('text', true));
         $this->assertSame(true, $data->bool('space', true));
-        $this->assertSame(true, $data->bool('int', true));
+        $this->assertSame(true, $data->bool('int_one'));
+        $this->assertSame(false, $data->bool('int_zero', true));
+        $this->assertSame(true, $data->bool('int_two', true));
+        $this->assertSame(false, $data->bool('int_two'));
         $this->assertSame(true, $data->bool('array', true));
     }
     

@@ -141,9 +141,9 @@ class LenientTypedData implements TypedDataInterface
     }
     
     /**
-     * Returns the value if it is a bool,
-     * or if it is a string representing a bool, otherwise the default.
-     * True: '1', 'true', 'on', 'yes'. False: '0', 'false', 'off', 'no', ''. Case-insensitive.
+     * Returns the value if it is a bool, the int 0 or 1,
+     * or a string representing a bool, otherwise the default.
+     * True: 1, '1', 'true', 'on', 'yes'. False: 0, '0', 'false', 'off', 'no', ''. Case-insensitive.
      *
      * @param string|int $key The key, supports dot notation.
      * @param bool $default The default value.
@@ -155,6 +155,11 @@ class LenientTypedData implements TypedDataInterface
         
         if (is_bool($value)) {
             return $value;
+        }
+        
+        // e.g. config values or database flags:
+        if ($value === 0 || $value === 1) {
+            return $value === 1;
         }
         
         if (!is_string($value) || trim($value) !== $value) {
