@@ -950,7 +950,7 @@ var_dump($data->array('order'));
 
 ### Lenient Typed Data
 
-Values with the requested type are valid, and strings which exactly represent an int, float or bool. Strings are validated, never cast.
+Values with the requested type are valid, and strings which exactly represent an int, float or bool. For ```bool()```, the int ```0``` and ```1``` are valid too, such as from config values or database flags. Strings are validated, never cast.
 
 ```php
 use Tobento\Service\Collection\LenientTypedData;
@@ -981,7 +981,7 @@ var_dump($data->int('limit', 20));
 | --- | --- | --- |
 | ```int()``` | int values: ```3```, ```-3```<br>strings: ```'3'```, ```'-3'```, ```'0'``` | float values: ```3.0```<br>strings: ```'03'```, ```'3.0'```, ```'1e3'```, ```' 3'```, ```'abc'```, overflow |
 | ```float()``` | float values: ```2.5```<br>int values: ```3``` (returned as ```3.0```)<br>strings: ```'2.5'```, ```'-2.5'```, ```'3'```, ```'.5'``` | strings: ```'2,5'```, ```'1e3'```, ```' 2.5'```, ```''```, ```'abc'``` |
-| ```bool()``` | bool values: ```true```, ```false```<br>strings true: ```'1'```, ```'true'```, ```'on'```, ```'yes'```<br>strings false: ```'0'```, ```'false'```, ```'off'```, ```'no'```, ```''``` | int values: ```1```, ```0```<br>strings: ```'2'```, ```' 1'```, ```'abc'``` |
+| ```bool()``` | bool values: ```true```, ```false```<br>int values: ```1```, ```0```<br>strings true: ```'1'```, ```'true'```, ```'on'```, ```'yes'```<br>strings false: ```'0'```, ```'false'```, ```'off'```, ```'no'```, ```''``` | int values: ```2```, ```-1```<br>float values: ```1.0```<br>strings: ```'2'```, ```' 1'```, ```'abc'``` |
 
 Strings with leading or trailing whitespace are never valid. The ```string()```, ```array()``` and ```list()``` methods work the same as in [Strict Typed Data](#strict-typed-data).
 
